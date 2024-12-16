@@ -1,8 +1,10 @@
 package id.my.hendisantika.redisdistributedlock;
 
 import id.my.hendisantika.redisdistributedlock.repository.ProductRepository;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -41,4 +43,9 @@ class SpringBootRedisDistributedLockApplicationTests {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
+    @BeforeEach
+    void setUp() {
+        RestAssured.baseURI = "http://localhost:" + port;
+        productRepository.deleteAll();
+    }
 }
