@@ -1,5 +1,7 @@
 package id.my.hendisantika.redisdistributedlock.service;
 
+import id.my.hendisantika.redisdistributedlock.dto.MakeOrderRequest;
+import id.my.hendisantika.redisdistributedlock.entity.Product;
 import id.my.hendisantika.redisdistributedlock.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
@@ -22,4 +24,11 @@ public class ProductService {
     private final LockRegistry lockRegistry;
     private final ProductRepository productRepository;
     private final RedissonClient redissonClient;
+
+    private void updateStock(MakeOrderRequest request, Product product) {
+        int newStock = product.getStock() - request.getStock();
+        product.setStock(newStock);
+        product.setUpdatedBy(request.getUpdatedBy());
+        productRepository.save(product);
+    }
 }
