@@ -1,7 +1,11 @@
 package id.my.hendisantika.redisdistributedlock.controller;
 
+import id.my.hendisantika.redisdistributedlock.dto.MakeOrderRequest;
 import id.my.hendisantika.redisdistributedlock.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,4 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
+
+    @PostMapping("/make-order/v1")
+    public ResponseEntity makeOrder(@RequestBody MakeOrderRequest request) throws Exception {
+        final var response = productService.makeOrder(request);
+        return ResponseEntity.ok(response);
+    }
 }
