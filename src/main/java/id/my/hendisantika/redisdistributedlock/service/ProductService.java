@@ -31,4 +31,20 @@ public class ProductService {
         product.setUpdatedBy(request.getUpdatedBy());
         productRepository.save(product);
     }
+
+    Product checkStock(MakeOrderRequest request) throws Exception {
+        var optionalProduct = productRepository.findById(request.getId());
+        if (optionalProduct.isEmpty()) {
+            System.out.println("Product not found");
+            throw new Exception("Product not found");
+        }
+
+        final var product = optionalProduct.get();
+        System.out.println(product.getStock() + "-" + request.getStock());
+        if (product.getStock() < request.getStock()) {
+            System.out.println(product.getStock() + " out of stock");
+            throw new Exception(product.getName() + " out of stock");
+        }
+        return product;
+    }
 }
