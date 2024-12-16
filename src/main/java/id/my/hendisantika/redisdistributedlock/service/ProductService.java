@@ -4,9 +4,12 @@ import id.my.hendisantika.redisdistributedlock.dto.MakeOrderRequest;
 import id.my.hendisantika.redisdistributedlock.entity.Product;
 import id.my.hendisantika.redisdistributedlock.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,5 +49,30 @@ public class ProductService {
             throw new Exception(product.getName() + " out of stock");
         }
         return product;
+    }
+
+    public String makeOrder(MakeOrderRequest request) throws Exception {
+        String key = "ID-" + request.getId().toString();
+        RLock lock = redissonClient.getLock(key);
+
+        boolean lockAcquired = lock.tryLock(5, TimeUnit.SECONDS);
+        if (lockAcquired) {
+            try {
+                final var product = checkStock(request);
+                updateStock(request, product);
+
+                Thread.sleep(request.getDelay());
+
+                return "ORDER COMPLETED" + "\n\r" +
+                        product.getName() + " stock count is : " + product.getStock();
+            } finally {
+                if (lockAcquired) {
+                    lock.unlock();
+                }
+            }
+        } else {
+            System.out.println("The product you want to buy is already locked");
+        }
+        return checkStock(request).toString();
     }
 }
