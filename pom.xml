@@ -16,7 +16,7 @@
     <properties>
         <java.version>25</java.version>
         <testcontainers.version>1.21.4</testcontainers.version>
-        <rest-assured.version>6.0.1</rest-assured.version>
+        <rest-assured.version>6.1.0</rest-assured.version>
     </properties>
     <dependencies>
         <dependency>
